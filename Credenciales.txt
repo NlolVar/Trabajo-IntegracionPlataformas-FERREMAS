@@ -1,0 +1,3 @@
+User: Admin
+Email: admin_ferreMAS@gmail.com
+Pass: ferreMAS

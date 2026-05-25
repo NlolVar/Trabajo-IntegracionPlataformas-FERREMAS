@@ -1,0 +1,32 @@
+{% extends 'tienda/main.html' %}
+{% load static %}
+{% block content %}
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
+    <!-- Banner principal -->
+    <section class="hero bannerFerremas" >
+        <div class="hero-content">
+            <h2>Todo lo que necesitas para construir tus sueños</h2>
+            <p>Herramientas profesionales y materiales de alta calidad.</p>
+            <a href="catalogo/" class="btn-main" style="background: #ff6600; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px;">Ver Catálogo</a>
+        </div>
+    </section>
+    <!-- Productos destacados -->
+     <div class="productoDestacado">
+         <h1 class="productoDestacado">Productos destacados</h1>
+     </div>
+
+    <div class="row">
+		{% for Producto in productos %}
+		<div class="col-lg-4">
+            <img class="thumbnail" src="{{Producto.imageURL}}">
+			<div class="box-element product">
+            <h6><strong>{{Producto.nombre}}</strong></h6>
+				<hr>
+				<button  class="btn btn-outline-secondary add-btn">Add to Cart</button>
+				<a class="btn btn-outline-success" href="#">View</a>
+				<h4 style="display: inline-block; float: right"><strong>{{Producto.precio|floatformat:2}}</strong></h4>
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+{% endblock content %}
