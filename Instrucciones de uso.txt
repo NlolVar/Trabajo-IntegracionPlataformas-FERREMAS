@@ -1,0 +1,31 @@
+Para lograr utilizar este proyecto con la base de datos MYSQL, se tiene que hacer lo siguiente:
+
+1. Asegurarse que tienen MYSQL80 activo (aprieten Windows + r, escriban services.msc y aprieten enter)
+(Después de eso, aprieten en la venta de servicios y aprieten la letra M, ahí deberán buscar donde esta el servicio MYSQL80).
+
+2. Instalar MYSQL Workbench.
+
+3. Crear una conexión nueva.
+
+4. Asegurarse de crear una base de datos con los siguientes atributos:
+        'ENGINE': 'django.db.backends.mysql', <- el motor que se está utilizando (suele ser simplemente MySQL Workbench 
+        'NAME': 'ferremas', <- nombre de la base de datos
+        'USER': 'root', <- user de tu usuario al instalar MySQL server
+        'PASSWORD': 'root', <- contraseña de tu usuario al instalar MySQL server
+        'HOST': 'localhost',  # or the hostname where your MySQL server is running <- el nombre de host que tiene
+        'PORT': '3306',      # or the port on which your MySQL server is listening <- el puerto que le pusiste al crear la conexión
+
+5. al estar en el proyecto, correr los siguientes comandos al terminar la conexión con la base de datos:
+
+Python manage.py makemigrations <- es para crear las tablas que uno tiene en la vista modelos de la app.
+Python manage.py migrate <- es para confirmar las operaciones y cambios a realizar a la base de datos
+
+*Estos comandos no son los que llenan la base de datos con los datos exactamente, eso se verá en el siguiente paso*
+
+6. con esos comandos listos, hay que escribir los siguientes comandos:
+
+Python manage.py loaddata datadump.json <- rellena la base de datos con los datos que tenemos actualmente
+
+*ATENCIÓN, CABE DESTACAR QUE SI AGREGAN DATOS Y QUIEREN GUARDARLOS PARA PODER MIGRAR A OTROS BASES DE DATOS, ASEGURARSE DE QUE ESTEN CÓDIFICADOS EN UTF-8*
+*SI QUIEREN UN COMANDO QUE FUNCIONA Y GUARDA TODO EN UTF-8, USEN EL SIGUIENTE:*
+python -Xutf8 manage.py dumpdata --exclude=contenttypes -o datadump.json
