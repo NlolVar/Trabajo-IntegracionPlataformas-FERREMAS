@@ -1,5 +1,7 @@
 from django.shortcuts import render
+from django.http import JsonResponse
 from .models import *
+import json
 # Create your views here.
 def tienda(request):
 	productos = Producto.objects.all()
@@ -34,3 +36,11 @@ def catalogo(request):
 	productos = Producto.objects.all()
 	context = {'productos':productos}
 	return render(request, 'tienda/catalogo.html', context)
+
+def updateItem(request):
+     data = json.loads(request.body)
+     productId = data['productId']
+     action = data['action']
+     print('action', action)
+     print('Product', productId)
+     return JsonResponse('Item was added', safe=False)
