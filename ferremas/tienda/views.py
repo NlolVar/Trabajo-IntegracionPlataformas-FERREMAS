@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import JsonResponse
 from .models import *
 import json
+import datetime
 # Create your views here.
 def tienda(request):
     if request.user.is_authenticated:
@@ -82,3 +83,30 @@ def updateItem(request):
         ordenItem.delete()
 
     return JsonResponse('producto fue agregado', safe=False)
+
+def processOrder(request):
+    transaccion_id = datetime.datetime.now().timestamp()
+    data = json.loads(request.body)
+
+    if request.user.is_authenticated:
+        cliente = request.user.cliente
+        orden, created = Orden.objects.get_or_create(cliente=cliente, complete=False)
+        total = float(data['form']['total'])
+        orden.transaccion_id = transaccion_id
+
+        if total == orden.get_carrito_total:
+          orden.complete = True
+          orden.save()
+
+        if orden.despacho == True:
+            DireccionDespacho.objects.create(
+                cliente=cliente,
+                orden=orden,
+                direccion=data['despacho']['direccion'],
+                ciudad=data['despacho']['ciudad'],
+                comuna=data['despacho']['comuna'],
+                codigo_postal=data['despacho']['codigoPostal']
+            )  
+    else:
+        print('Usuario no esta logeado.')
+    return JsonResponse('pago fue enviado...', safe=False)
