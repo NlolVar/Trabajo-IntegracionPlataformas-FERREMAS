@@ -11,7 +11,7 @@ def tienda(request):
         carritoItems = orden.get_cart_items
     else:
         items = []
-        orden = {'get_carrito_total':0, 'get_cart_items':0}
+        orden = {'get_carrito_total':0, 'get_cart_items':0, 'despacho':False}
         carritoItems = orden['get_cart_items']
                
     productos = Producto.objects.all()
@@ -26,7 +26,7 @@ def carrito(request):
         carritoItems = orden.get_cart_items
     else:
         items = []
-        orden = {'get_carrito_total':0, 'get_cart_items':0}
+        orden = {'get_carrito_total':0, 'get_cart_items':0, 'despacho':False}
         carritoItems = orden['get_cart_items']
 
     context = {'items':items, 'orden':orden, 'carritoItems':carritoItems}
@@ -40,7 +40,7 @@ def pago(request):
         carritoItems = orden.get_cart_items
     else:
         items = []
-        orden = {'get_carrito_total':0, 'get_cart_items':0}
+        orden = {'get_carrito_total':0, 'get_cart_items':0, 'despacho':False}
         carritoItems = orden['get_cart_items']
 
     context = {'items':items, 'orden':orden, 'carritoItems':carritoItems}
@@ -54,7 +54,7 @@ def catalogo(request):
         carritoItems = orden.get_cart_items
     else:
         items = []
-        orden = {'get_carrito_total':0, 'get_cart_items':0}
+        orden = {'get_carrito_total':0, 'get_cart_items':0, 'despacho':False}
         carritoItems = orden['get_cart_items']    
     productos = Producto.objects.all()
     context = {'productos':productos,'carritoItems':carritoItems}

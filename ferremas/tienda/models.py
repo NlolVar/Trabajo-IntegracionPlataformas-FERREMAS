@@ -14,6 +14,7 @@ class Cliente(models.Model):
 class Producto(models.Model):
 	nombre = models.CharField(max_length=200)
 	precio = models.FloatField()
+	digital = models.BooleanField(default=False, null=True, blank=True)
 	image = models.ImageField(null=True, blank=True)
 
 	def __str__(self):
@@ -47,7 +48,15 @@ class Orden(models.Model):
 		orderitems = self.ordenitem_set.all()
 		total = sum([item.cantidad for item in orderitems])
 		return total 
-	
+	@property
+	def despacho(self):
+		despacho = False
+		ordenItems = self.ordenitem_set.all()
+		for i in ordenItems:
+			if i.producto.digital == False:
+				despacho = True
+			return despacho
+
 class OrdenItem(models.Model):
 	producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True)
 	orden = models.ForeignKey(Orden, on_delete=models.SET_NULL, null=True)
