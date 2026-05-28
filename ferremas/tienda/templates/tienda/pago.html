@@ -136,9 +136,13 @@
 	    	})
 	    	.then((response) => response.json())
 	    	.then((data) => {
-				  console.log('Exitoso:', data);
-				  alert('Transaccion completa');  
-				  window.location.href = "{% url 'tienda' %}"
+				console.log('Exitoso:', data);
+				alert('Transaccion completa');
+				  
+				carrito = {}
+				document.cookie ='carrito=' + JSON.stringify(carrito) + ";domain=;path=/"
+
+				window.location.href = "{% url 'tienda' %}"
 
 			})
 		}

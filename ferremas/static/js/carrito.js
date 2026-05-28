@@ -8,6 +8,7 @@ for (i = 0; i < actuBotones.length; i++) {
         console.log('USER:', user)
 		
         if (user == 'AnonymousUser'){
+            addCookieItem(productId, action)
 			console.log('User is not authenticated')
 			
 		}else{
@@ -36,3 +37,27 @@ function updateUserOrder(productId, action){
     })
 }
 
+function addCookieItem(productId, action){
+    console.log("Usuario no esta autenticado")
+
+    if (action == 'add'){
+        if (carrito[productId] == undefined){
+            carrito[productId] = {'cantidad': 1}
+        }else{
+            carrito[productId]['cantidad'] += 1
+        }
+    }
+
+    if (action == 'remove'){
+        carrito[productId]['cantidad'] -= 1
+        
+        if (carrito[productId]['cantidad'] <= 0){
+            console.log('Item debio haber sido eliminado')
+            delete carrito[productId];
+        }
+    }
+    console.log('carrito:', carrito)
+    document.cookie= 'carrito='+ JSON.stringify(carrito) + ";domain=;path=/"
+
+    location.reload()
+}
