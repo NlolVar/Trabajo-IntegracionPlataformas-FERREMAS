@@ -1,0 +1,70 @@
+{% extends 'tienda/main.html' %}
+{% load static %}
+{% block titulo %} Lista de productos {% endblock %}
+
+
+{% block content %}
+
+
+
+<div class="card">
+    <div class="card-header">Listar productos
+        <br>
+        <a name=""  id="" class="btn btn-success" href="{% url 'crear' %}" role="button"> Agregar producto</a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Productos</h4>
+        <div
+            class="table-responsive"
+        >
+            <table
+                class="table table-primary"
+            >
+                <thead>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Descripcion</th>
+                        <th scope="col">Precio</th>
+                        <th scope="col">Stock</th>
+                        <th scope="col">Entrega</th>
+                        <th scope="col">Imagen</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for producto in productos %}
+                    <tr>
+                        <td>{{ producto.nombre }}</td>
+                        <td>{{ producto.descripcion }}</td>
+                        <td>${{ producto.precio }}</td>
+                        <td>{{ producto.stock_disp }}</td>
+                        <td>
+                            {% if producto.entrega %} SI {% else %} NO {% endif %}
+                        </td>
+                        <td>
+                            {% if producto.imageURL %}
+                                <img src="{{ producto.imageURL }}" width="50" alt="{{ producto.nombre }}">
+                            {% else %}
+                                Sin imagen
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'editar' producto.id %}" class="btn btn-info" role="button">Editar</a> 
+                            <a href="{% url 'eliminar' producto.id %}" class="btn btn-danger" role="button">Borrar</a>
+                        </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">No hay productos registrados en la tienda.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+            </table>
+        </div>
+        
+        <!-- <p class="card-text">Text</p> -->
+    </div>
+    <!-- <div class="card-footer text-body-secondary">Footer</div> -->
+</div>
+
+
+{% endblock %}

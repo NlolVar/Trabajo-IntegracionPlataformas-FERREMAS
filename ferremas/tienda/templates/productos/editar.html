@@ -1,0 +1,21 @@
+{% extends 'tienda/main.html' %}
+{% load static %}
+{% block titulo %} Editar producto {% endblock %}
+
+{% block content %}
+
+ <div class="card">
+    <div class="card-header">
+        Editar informacion del producto
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">Datos del producto</h4>
+        {% include 'productos/form.html' %}
+
+        
+        <!-- <p class="card-text">Text</p> -->
+    </div>
+    <!-- <div class="card-footer text-body-secondary">Footer</div> -->
+ </div>
+
+{% endblock %}

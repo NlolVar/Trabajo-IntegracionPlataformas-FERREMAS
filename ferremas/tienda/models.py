@@ -1,20 +1,32 @@
+from enum import unique
 from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
-class Cliente(models.Model):
-	usuario = models.OneToOneField(User, null=True, blank=True, on_delete=models.CASCADE)
-	nombre = models.CharField(max_length=200, null=True)
-	correo = models.CharField(max_length=200)
-	
+class Rol(models.Model):
+	nombre_rol = models.CharField(max_length=255, unique=True)
+	descripcion_rol = models.TextField(blank=True, null=True)
+
+	def __str__(self):
+		return self.nombre_rol
+
+class UsuarioSistema(models.Model):
+	usuario = models.OneToOneField(User, null=False, blank=False, on_delete=models.CASCADE)
+	nombre = models.CharField(max_length=255, null=False)
+	correo = models.CharField(max_length=255)
+	contrasena = models.CharField(max_length=255, null=False, blank=False)
+	telefono = models.CharField(max_length=255)
+	rol = models.ForeignKey(Rol, on_delete=models.SET_NULL, null=True, blank=True)
 
 	def __str__(self):
 		return self.nombre
 
 class Producto(models.Model):
-	nombre = models.CharField(max_length=200)
-	precio = models.FloatField()
-	entrega = models.BooleanField(default=False, null=True, blank=True)
+	nombre = models.CharField(max_length=200, null=False)
+	descripcion = models.CharField(max_length=500, null=True, blank=True)
+	precio = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=False)
+	stock_disp = models.IntegerField(default=0, null=False)
+	entrega = models.BooleanField(default=False, null=False, blank=False)
 	image = models.ImageField(null=True, blank=True)
 
 	def __str__(self):
@@ -25,14 +37,13 @@ class Producto(models.Model):
 		try:
 			url = self.image.url
 		except:
-			url = ''
+			url = '/static/images/placehold-tienda.png'
 		return url
 
 class Orden(models.Model):
-	cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True)
+	usuario = models.ForeignKey(UsuarioSistema, on_delete=models.SET_NULL, null=True, blank=True)
 	fecha_orden = models.DateTimeField(auto_now_add=True)
 	complete = models.BooleanField(default=False)
-	id_transaccion = models.CharField(max_length=100, null=True)
 
 	def __str__(self):
 		return str(self.id)
@@ -48,6 +59,7 @@ class Orden(models.Model):
 		orderitems = self.ordenitem_set.all()
 		total = sum([item.cantidad for item in orderitems])
 		return total 
+		
 	@property
 	def despacho(self):
 		despacho = False
@@ -69,7 +81,7 @@ class OrdenItem(models.Model):
 		return total
 	
 class DireccionDespacho(models.Model):
-	cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True)
+	usuario = models.ForeignKey(UsuarioSistema, on_delete=models.SET_NULL, null=True)
 	orden = models.ForeignKey(Orden, on_delete=models.SET_NULL, null=True)
 	direccion = models.CharField(max_length=200, null=False)
 	ciudad = models.CharField(max_length=200, null=False)

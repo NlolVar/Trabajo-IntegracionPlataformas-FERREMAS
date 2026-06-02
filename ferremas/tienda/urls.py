@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from tienda import views
 
 urlpatterns = [
         #Leave as empty string for base url
@@ -8,5 +8,11 @@ urlpatterns = [
 	path('pago/', views.pago, name="pago"),
     path('catalogo/', views.catalogo, name="catalogo"),
 	path('update_item/', views.updateItem, name="update_item"),
-    path('process_order/', views.processOrder, name="process_order")
+    path('process_order/', views.processOrder, name="process_order"),
+    path('login/', views.login_usuario, name="login"),
+	path('registro/', views.register, name="registro"),
+    path('productos/', views.productos, name="producto"),
+    path('productos/crear', views.crearProd, name="crear"),
+    path('eliminar/<int:id>', views.eliminarProd, name="eliminar"),
+    path('productos/editar/<int:id>', views.editarProd, name="editar")
 ]

@@ -1,5 +1,6 @@
+from tienda.models import UsuarioSistema
 import json
-from .models import *
+from tienda.models import *
 
 def cookieCarrito(request):
     try:
@@ -43,12 +44,22 @@ def cookieCarrito(request):
 
 
 def carritoData(request):
+
+    usuario_sistema = None
+
     if request.user.is_authenticated:
-        cliente = request.user.cliente
-        orden, created = Orden.objects.get_or_create(cliente=cliente, complete=False)
+        print('Usuario esta logeado.')
+        usuario_sistema = UsuarioSistema.objects.filter(usuario=request.user).first()
+        # usuario = request.user.usuariosistema
+
+    if usuario_sistema is not None:
+        orden, created = Orden.objects.get_or_create(usuario=usuario_sistema, complete=False)
         items = orden.ordenitem_set.all()
         carritoItems = orden.get_cart_items
+    
+
     else:
+        print('Usuario no esta logeado.')
         cookieData = cookieCarrito(request)
         carritoItems = cookieData['carritoItems']
         orden = cookieData['orden']
@@ -63,14 +74,14 @@ def ordenGuest(request, data):
         cookieData = cookieCarrito(request)
         items = cookieData['items']
 
-        cliente, created = Cliente.objects.get_or_create(
+        usuario, created = UsuarioSistema.objects.get_or_create(
             correo=correo,
         )
-        cliente.nombre = nombre
-        cliente.save()
+        usuario.nombre = nombre
+        usuario.save()
 
         orden = Orden.objects.create(
-            cliente=cliente,
+            usuario=usuario,
             complete=False,
         )
 
@@ -81,4 +92,4 @@ def ordenGuest(request, data):
                 orden=orden,
                 cantidad=item['cantidad'],
             )
-        return cliente, orden
+        return usuario, orden

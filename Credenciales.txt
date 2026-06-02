@@ -1,3 +1,17 @@
+(Del superusuario)
 User: Admin
 Email: admin_ferreMAS@gmail.com
 Pass: ferreMAS
+
+
+(Del app-empresa)
+
+User: sb-whogw49007738@business.example.com
+Pass:icN)ppP6
+
+sb-cwcxo51419087@business.example.com
+64zr+Z*?
+(Del cliente)
+
+User: sb-shbjc51361360@personal.example.com
+Pass: d+d4UMn}

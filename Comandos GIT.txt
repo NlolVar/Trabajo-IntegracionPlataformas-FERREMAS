@@ -1,0 +1,32 @@
+PARA SUBIR AL GITHUB:
+
+git status (mirar si hay algún archivo diferente al repositorio)
+
+git add . (agregar todos los archivos)
+
+git commit -m "msj" (confirmar cambios y etiquetarle un mensaje)
+
+git push -u origin main (subir los cambios al repositorio)
+
+
+
+PARA CLONAR REPOSITORIO A ORDENADOR:
+
+-> Copiar URL de repositorio
+
+-> Crear una carpeta para guardar repositorio
+
+-> Abrir cmd o gitbash para ubicar tu carpeta (DIR para saber donde estás actualmente, CD para cambiar, también se puede copiar y pegar la ruta de la carpeta directamente
+se pega con shit + insert)
+
+-> Escribir el comando "git clone (INSERTAR URL AQUI)"
+
+
+QUE HACER EN CASO DE CONFLICTO DE REPOSITORIO
+
+-> en el VSCODE o tu herramienta preferida, debes escribir el siguiente comando:
+"git fetch"
+
+-> al realizar esto, se descargarán los cambios realizados en el repositorio, y dará la opción de elegir entre los dos cambios más recientes.
+
+*solo utilizar en caso de que haya conflicto de merge*

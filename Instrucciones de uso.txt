@@ -29,3 +29,12 @@ Python manage.py loaddata datadump.json <- rellena la base de datos con los dato
 *ATENCIÓN, CABE DESTACAR QUE SI AGREGAN DATOS Y QUIEREN GUARDARLOS PARA PODER MIGRAR A OTROS BASES DE DATOS, ASEGURARSE DE QUE ESTEN CÓDIFICADOS EN UTF-8*
 *SI QUIEREN UN COMANDO QUE FUNCIONA Y GUARDA TODO EN UTF-8, USEN EL SIGUIENTE:*
 python -Xutf8 manage.py dumpdata --exclude=contenttypes -o datadump.json
+
+PARA SERVICIO PAYPAL:
+
+METERSE A PAYPAL SANDBOX
+PAYPAL DEVELOPER
+
+
+-> Página de referencia
+https://www.sodimac.cl/sodimac-cl
