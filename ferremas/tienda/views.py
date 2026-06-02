@@ -189,13 +189,24 @@ def login_usuario(request): # Le cambiamos el nombre a la vista para que sea sú
     return render(request, 'sesion/login.html', context)
 
 def register(request):
-    data = {
-        'form': CustomUserCreationForm()
+    data = carritoData(request)
+    carritoItems = data['carritoItems']
+    user_creation_form = CustomUserCreationForm()
+
+    contexto_data = {
+        'form': user_creation_form,
+        'carritoItems': carritoItems
     }
 
     if request.method == 'POST':
         user_creation_form = CustomUserCreationForm(data=request.POST)
 
+        # if user_creation_form.is_valid():
+        #     user = user_creation_form.save()
+        #     django_login(request, user)
+        #     return redirect('tienda')
+        # else:
+        #     contexto_data['form'] = user_creation_form
         if user_creation_form.is_valid():
             # Esto ahora guarda de forma interna el User de Django Y el UsuarioSistema
             user = user_creation_form.save()
@@ -211,32 +222,60 @@ def register(request):
         else:
             data['form'] = user_creation_form
 
-    return render(request, 'sesion/registro.html', data)
+    return render(request, 'sesion/registro.html', contexto_data)
 
 def productos(request):
     lista_productos = Producto.objects.all()
+    data = carritoData(request)
+
+    carritoItems = data['carritoItems']
+    orden = data['orden']
+    items = data['items']
     context = {
-        'productos': lista_productos
+        'productos': lista_productos,
+        'carritoItems': carritoItems,
+        'orden': orden,
+        'items': items
     }
 
     return render(request, 'productos/index.html', context)
 
 def crearProd(request):
+    data = carritoData(request)
+    carritoItems = data['carritoItems']
+
     formulario = ProductoForm(request.POST or None, request.FILES or None)
     if formulario.is_valid():
         formulario.save()
         return redirect('producto')
-    return render(request, 'productos/crear.html', {'formulario': formulario})
+    
+    context = {
+        'formulario': formulario,
+        'carritoItems': carritoItems
+    }
+    return render(request, 'productos/crear.html', context)
 
 def editarProd(request, id):
+    data = carritoData(request)
+    carritoItems = data['carritoItems']
+
     producto = Producto.objects.get(id=id)
     formulario = ProductoForm(request.POST or None, request.FILES or None, instance=producto)
     if formulario.is_valid() and request.method == 'POST':
         formulario.save()
         return redirect('producto')
-    return render(request, 'productos/editar.html', {'formulario': formulario})
+    
+    context ={
+        'formulario': formulario,
+        'carritoItems': carritoItems
+    }
+    return render(request, 'productos/editar.html', context)
 
 def eliminarProd(request, id):
     producto = Producto.objects.get(id=id)
     producto.delete()
     return redirect('producto')
+
+def logout_usuario(request):
+    logout(request)
+    return redirect('tienda')

@@ -14,5 +14,6 @@ urlpatterns = [
     path('productos/', views.productos, name="producto"),
     path('productos/crear', views.crearProd, name="crear"),
     path('eliminar/<int:id>', views.eliminarProd, name="eliminar"),
-    path('productos/editar/<int:id>', views.editarProd, name="editar")
+    path('productos/editar/<int:id>', views.editarProd, name="editar"),
+    path('logout/', views.logout_usuario, name="logout")
 ]
