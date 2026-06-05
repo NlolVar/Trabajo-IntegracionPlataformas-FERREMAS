@@ -50,13 +50,16 @@ def pago(request):
 def catalogo(request):
     
     data = carritoData(request)
-
     carritoItems = data['carritoItems']
-    orden = data['orden']
-    items = data['items']   
 
-    productos = Producto.objects.all()
-    context = {'productos':productos,'carritoItems':carritoItems}
+    query = request.GET.get('buscar')
+
+    if query:
+        productos = Producto.objects.filter(nombre__icontains=query)
+    else:
+        productos = Producto.objects.all()
+
+    context = {'productos':productos,'carritoItems':carritoItems, 'query':query}
     return render(request, 'tienda/catalogo.html', context)
 
 def updateItem(request):

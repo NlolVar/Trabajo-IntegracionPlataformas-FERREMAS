@@ -82,6 +82,14 @@
                     <a class="nav-link" href="{% url 'producto' %}">Productos <span class="sr-only">(current)</span></a>
                 </li>
             </ul>
+            <form class="form-inline my-2 my-lg-0 mr-auto ml-3" method="GET" action="{% url 'catalogo' %}">
+                <input class="form-control mr-sm-2" type="search" name="buscar" placeholder="Buscar productos..." aria-label="Search" value="{{ request.GET.buscar }}">
+                <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Buscar</button>
+            </form>
+            <!-- <form class="d-flex" style="margin-right: 3.5rem;">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form> -->
             <div class="form-inline my-2 my-lg-0">
                 {% if request.user.is_authenticated %}
                 <span class="text-white mr-3">hola, {{ request.user.username }}</span>
