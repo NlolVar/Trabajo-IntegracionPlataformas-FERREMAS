@@ -11,7 +11,37 @@
             style="background: #ff6600; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; margin-top: 15px;">Ver
             Catálogo</a>
     </div>
+
+    <!-- Carrusel de Productos -->
+    <div id="productCarousel" class="carousel slide mb-5 mt-4" data-ride="carousel" style="width: 80%; margin: 0 auto;">
+        <ol class="carousel-indicators">
+            {% for Producto in productos %}
+            <li data-target="#productCarousel" data-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}"></li>
+            {% endfor %}
+        </ol>
+        <div class="carousel-inner" style="background-color: rgba(248, 249, 250, 0.9); border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+            {% for Producto in productos %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                <img src="{{Producto.imageURL}}" class="d-block w-100" alt="{{Producto.nombre}}" style="height: 400px; object-fit: contain; padding: 20px;">
+                <div class="carousel-caption d-none d-md-block" style="background-color: rgba(0,0,0,0.8); border-radius: 10px; padding: 15px; bottom: 30px; margin: 0 auto; max-width: 60%;">
+                    <h4 style="color: white; text-shadow: 1px 1px 2px black;">{{Producto.nombre}}</h4>
+                    <p style="font-size: 1.2rem; font-weight: bold; color: #ffc107; margin-bottom: 10px;">${{Producto.precio|floatformat:2}}</p>
+                    <a href="catalogo/" class="btn btn-warning btn-sm">Comprar ahora</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a class="carousel-control-prev" href="#productCarousel" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true" style="background-color: rgba(0,0,0,0.6); border-radius: 50%; width: 40px; height: 40px; background-size: 50%;"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#productCarousel" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true" style="background-color: rgba(0,0,0,0.6); border-radius: 50%; width: 40px; height: 40px; background-size: 50%;"></span>
+            <span class="sr-only">Next</span>
+        </a>
+    </div>
 </section>
+
 <!-- Productos destacados -->
 <div class="productoDestacado">
     <h1 class="productoDestacado">Productos destacados</h1>

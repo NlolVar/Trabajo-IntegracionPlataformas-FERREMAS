@@ -15,5 +15,9 @@ urlpatterns = [
     path('productos/crear', views.crearProd, name="crear"),
     path('eliminar/<int:id>', views.eliminarProd, name="eliminar"),
     path('productos/editar/<int:id>', views.editarProd, name="editar"),
+    path('usuarios/', views.usuario, name="usuario"),
+    path('usuarios/crear', views.crearUser, name="crearUser"),
+    path('eliminarUser/<int:id>', views.eliminarUser, name="eliminarUser"),
+    path('usuarios/editar/<int:id>', views.editarUser, name="editarUser"),
     path('logout/', views.logout_usuario, name="logout")
 ]

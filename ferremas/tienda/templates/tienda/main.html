@@ -4,6 +4,7 @@
 <!-- Título de la pestaña -->
 
 <head>
+    <meta charset="UTF-8">
     <title>FERREMAS | Tu Ferretería</title>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
@@ -80,6 +81,9 @@
                 </li>
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'producto' %}">Productos <span class="sr-only">(current)</span></a>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'usuario' %}">Usuarios <span class="sr-only">(current)</span></a>
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0 mr-auto ml-3" method="GET" action="{% url 'catalogo' %}">

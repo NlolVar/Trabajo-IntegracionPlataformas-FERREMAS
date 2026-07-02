@@ -5,10 +5,14 @@ from tienda.models import *
 import json, datetime
 from tienda.utils import *
 from django.views.decorators.csrf import csrf_exempt
-from .forms import CustomUserCreationForm
 from django.contrib.auth import authenticate, login as django_login, logout
 from django.shortcuts import render, redirect
-from .forms import FormularioLogin, ProductoForm
+from tienda.forms import (
+    CustomUserCreationForm,
+    FormularioLogin,
+    ProductoForm,
+    UsuarioForm,
+)
 
 # Create your views here.
 
@@ -116,7 +120,7 @@ def processOrder(request):
         total = float(data['form']['total'])
         orden.transaccion_id = transaccion_id
 
-        if total == orden.get_carrito_total:
+        if total == float(orden.get_carrito_total):
             orden.complete = True
             orden.save()
 
@@ -139,7 +143,7 @@ def processOrder(request):
         total = float(data['form']['total'])
         orden.transaccion_id = transaccion_id
 
-        if total == orden.get_carrito_total:
+        if total == float(orden.get_carrito_total):
             orden.complete = True
         orden.save()
 
@@ -278,6 +282,59 @@ def eliminarProd(request, id):
     producto = Producto.objects.get(id=id)
     producto.delete()
     return redirect('producto')
+
+def usuario(request):
+    lista_usuarios = UsuarioSistema.objects.all()
+    data = carritoData(request)
+
+    carritoItems = data['carritoItems']
+    orden = data['orden']
+    items = data['items']
+    context = {
+        'usuarios': lista_usuarios,
+        'carritoItems': carritoItems,
+        'orden': orden,
+        'items': items
+    }
+
+    return render(request, 'usuarios/indexUser.html', context)
+
+def crearUser(request):
+    data = carritoData(request)
+    carritoItems = data['carritoItems']
+
+    formulario = UsuarioForm(request.POST or None, request.FILES or None)
+    if formulario.is_valid():
+        formulario.save()
+        return redirect('usuario')
+    
+    context = {
+        'formulario': formulario,
+        'carritoItems': carritoItems
+    }
+    return render(request, 'usuarios/crearUser.html', context)
+
+def editarUser(request, id):
+    data = carritoData(request)
+    carritoItems = data['carritoItems']
+
+    usuario = UsuarioSistema.objects.get(id=id)
+    formulario = UsuarioForm(request.POST or None, request.FILES or None, instance=usuario)
+    if formulario.is_valid() and request.method == 'POST':
+        formulario.save()
+        return redirect('usuario')
+    
+    context ={
+        'formulario': formulario,
+        'carritoItems': carritoItems
+    }
+    return render(request, 'usuarios/editarUser.html', context)
+
+def eliminarUser(request, id):
+    usuario = UsuarioSistema.objects.get(id=id)
+    usuario.delete()
+    return redirect('usuario')
+
 
 def logout_usuario(request):
     logout(request)

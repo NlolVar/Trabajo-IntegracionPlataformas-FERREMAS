@@ -67,3 +67,8 @@ class ProductoForm(forms.ModelForm):
     class Meta:
         model = Producto
         fields = '__all__'
+
+class UsuarioForm(forms.ModelForm):
+    class Meta:
+        model = UsuarioSistema
+        fields = '__all__'
