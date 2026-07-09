@@ -79,15 +79,29 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'tienda' %}">Tienda <span class="sr-only">(current)</span></a>
                 </li>
+                {% if request.user.is_authenticated %}
+                {% if request.user.usuariosistema.rol.nombre_rol == 'Administrador' or request.user.usuariosistema.rol.nombre_rol == 'Bodeguero' %}
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'producto' %}">Productos <span class="sr-only">(current)</span></a>
                 </li>
+                {% endif %}
+                {% endif %}
+                {% if request.user.is_authenticated and request.user.usuariosistema.rol.nombre_rol == 'Administrador' %}
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'usuario' %}">Usuarios <span class="sr-only">(current)</span></a>
                 </li>
+                {% endif %}
+                {% if request.user.is_authenticated %}
+                {% if request.user.usuariosistema.rol.nombre_rol == 'Administrador' or request.user.usuariosistema.rol.nombre_rol == 'Vendedor' or request.user.usuariosistema.rol.nombre_rol == 'Contador' %}
+                <li class="nav-item active">
+                    <a class="nav-link" href="{% url 'reporte' %}">Reportes <span class="sr-only">(current)</span></a>
+                </li>
+                {% endif %}
+                {% endif %}
             </ul>
             <form class="form-inline my-2 my-lg-0 mr-auto ml-3" method="GET" action="{% url 'catalogo' %}">
-                <input class="form-control mr-sm-2" type="search" name="buscar" placeholder="Buscar productos..." aria-label="Search" value="{{ request.GET.buscar }}">
+                <input class="form-control mr-sm-2" type="search" name="buscar" placeholder="Buscar productos..."
+                    aria-label="Search" value="{{ request.GET.buscar }}">
                 <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Buscar</button>
             </form>
             <!-- <form class="d-flex" style="margin-right: 3.5rem;">

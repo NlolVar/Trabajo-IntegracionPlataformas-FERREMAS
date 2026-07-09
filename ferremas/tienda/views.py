@@ -13,7 +13,24 @@ from tienda.forms import (
     ProductoForm,
     UsuarioForm,
 )
+from django.contrib.auth.decorators import user_passes_test
 
+def es_administrador(user):
+    if not user.is_authenticated:
+        return False
+    try:
+        return user.usuariosistema.rol.nombre_rol == 'Administrador'
+    except:
+        return False
+    
+def herramientaReport(user):
+    if not user.is_authenticated:
+        return False
+    try:
+        rol = user.usuariosistema.rol.nombre_rol
+        return rol in ('Vendedor', 'Administrador', 'Contador')
+    except:
+        return False
 # Create your views here.
 
 
@@ -283,6 +300,7 @@ def eliminarProd(request, id):
     producto.delete()
     return redirect('producto')
 
+@user_passes_test(es_administrador, login_url='login')
 def usuario(request):
     lista_usuarios = UsuarioSistema.objects.all()
     data = carritoData(request)
@@ -299,6 +317,7 @@ def usuario(request):
 
     return render(request, 'usuarios/indexUser.html', context)
 
+@user_passes_test(es_administrador, login_url='login')
 def crearUser(request):
     data = carritoData(request)
     carritoItems = data['carritoItems']
@@ -314,6 +333,7 @@ def crearUser(request):
     }
     return render(request, 'usuarios/crearUser.html', context)
 
+@user_passes_test(es_administrador, login_url='login')
 def editarUser(request, id):
     data = carritoData(request)
     carritoItems = data['carritoItems']
@@ -324,12 +344,15 @@ def editarUser(request, id):
         formulario.save()
         return redirect('usuario')
     
+    roles = Rol.objects.all()
     context ={
         'formulario': formulario,
-        'carritoItems': carritoItems
+        'carritoItems': carritoItems,
+        'roles': roles
     }
     return render(request, 'usuarios/editarUser.html', context)
 
+@user_passes_test(es_administrador, login_url='login')
 def eliminarUser(request, id):
     usuario = UsuarioSistema.objects.get(id=id)
     usuario.delete()
@@ -339,3 +362,68 @@ def eliminarUser(request, id):
 def logout_usuario(request):
     logout(request)
     return redirect('tienda')
+
+@user_passes_test(herramientaReport, login_url='login')
+def reporte(request):
+    data = carritoData(request)
+    carritoItems = data['carritoItems']
+    
+    # Obtenemos todas las órdenes, ordenadas por la más reciente
+    ordenes = Orden.objects.all().order_by('-fecha_orden')
+    
+    context = {
+        'ordenes': ordenes,
+        'carritoItems': carritoItems
+    }
+    return render(request, 'reporte/indexReporte.html', context)
+
+import csv
+from django.http import HttpResponse
+
+@user_passes_test(herramientaReport, login_url='login')
+def exportar_reporte(request):
+    # Obtenemos las órdenes
+    ordenes = Orden.objects.all().order_by('-fecha_orden')
+    
+    # Creamos la respuesta HTTP con el tipo de contenido CSV
+    response = HttpResponse(content_type='text/csv; charset=utf-8-sig')
+    response['Content-Disposition'] = 'attachment; filename="reporte_ordenes.csv"'
+    
+    # Escribimos el CSV
+    writer = csv.writer(response, delimiter=';')
+    
+    # Escribimos el encabezado (Header)
+    writer.writerow(['Usuario', 'Correo', 'Producto(s)', 'Direccion de Despacho', 'Precio Total', 'Fecha Orden', 'Completada'])
+    
+    # Iteramos sobre las órdenes para agregar los datos
+    for orden in ordenes:
+        # Extraemos los productos
+        productos_str = ", ".join([f"{item.producto.nombre} (x{item.cantidad})" for item in orden.ordenitem_set.all()])
+        
+        # Extraemos las direcciones
+        direcciones = orden.direcciondespacho_set.all()
+        if direcciones:
+            direccion = direcciones.first()
+            direccion_str = f"{direccion.direccion}, {direccion.comuna}, {direccion.ciudad}"
+        else:
+            direccion_str = "Sin despacho / Retiro en tienda"
+        
+        # Fecha formateada
+        fecha_str = orden.fecha_orden.strftime("%d/%m/%Y %H:%M")
+        
+        # Verificamos si la orden tiene un usuario asignado (puede ser un usuario invitado)
+        usuario_nombre = orden.usuario.nombre if orden.usuario else "Usuario Anónimo"
+        usuario_correo = orden.usuario.correo if orden.usuario else "Sin correo"
+
+        # Escribimos la fila
+        writer.writerow([
+            usuario_nombre,
+            usuario_correo,
+            productos_str,
+            direccion_str,
+            orden.get_carrito_total,
+            fecha_str,
+            'Si' if orden.complete else 'No'
+        ])
+        
+    return response

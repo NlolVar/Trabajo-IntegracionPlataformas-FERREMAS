@@ -10,16 +10,12 @@
 <div class="card">
     <div class="card-header">Listar usuarios
         <br>
-        <a name=""  id="" class="btn btn-success" href="{% url 'crearUser' %}" role="button"> Agregar Usuario</a>
+        <a name="" id="" class="btn btn-success" href="{% url 'crearUser' %}" role="button"> Agregar Usuario</a>
     </div>
     <div class="card-body">
         <h4 class="card-title">Usuarios</h4>
-        <div
-            class="table-responsive"
-        >
-            <table
-                class="table table-primary"
-            >
+        <div class="table-responsive">
+            <table class="table table-primary">
                 <thead>
                     <tr>
                         <th scope="col">Usuario</th>
@@ -35,22 +31,23 @@
                         <td>{{ usuario.usuario }}</td>
                         <td>{{ usuario.nombre }}</td>
                         <td>{{ usuario.correo }}</td>
-                        <td>${{ usuario.telefono }}</td>
+                        <td>{{ usuario.telefono }}</td>
                         <td>{{ usuario.rol }}</td>
                         <td>
-                            <a href="{% url 'editarUser' usuario.id %}" class="btn btn-info" role="button">Editar</a> 
-                            <a href="{% url 'eliminarUser' usuario.id %}" class="btn btn-danger" role="button">Borrar</a>
+                            <a href="{% url 'editarUser' usuario.id %}" class="btn btn-info" role="button">Editar</a>
+                            <a href="{% url 'eliminarUser' usuario.id %}" class="btn btn-danger"
+                                role="button">Borrar</a>
                         </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="7" class="text-center">No hay usuarios registrados en la tienda.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No hay usuarios registrados en la tienda.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
-        
+
         <!-- <p class="card-text">Text</p> -->
     </div>
     <!-- <div class="card-footer text-body-secondary">Footer</div> -->

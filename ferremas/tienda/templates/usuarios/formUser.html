@@ -1,31 +1,144 @@
+<style>
+    .rol-field-wrapper {
+        position: relative;
+    }
+    .rol-select-container {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .rol-select-container select {
+        flex: 1;
+    }
+    .rol-tooltip-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: #fff;
+        font-weight: bold;
+        font-size: 14px;
+        cursor: pointer;
+        position: relative;
+        flex-shrink: 0;
+        box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .rol-tooltip-icon:hover {
+        transform: scale(1.15);
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.6);
+    }
+    .rol-tooltip-box {
+        display: none;
+        position: absolute;
+        bottom: calc(100% + 10px);
+        right: -10px;
+        min-width: 260px;
+        max-width: 320px;
+        background: #1e1b4b;
+        color: #e0e7ff;
+        padding: 12px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.5;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        z-index: 1000;
+        pointer-events: none;
+    }
+    .rol-tooltip-box::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        right: 18px;
+        border-width: 8px;
+        border-style: solid;
+        border-color: #1e1b4b transparent transparent transparent;
+    }
+    .rol-tooltip-box strong {
+        color: #a5b4fc;
+        display: block;
+        margin-bottom: 4px;
+        font-size: 14px;
+    }
+    .rol-tooltip-icon:hover .rol-tooltip-box {
+        display: block;
+    }
+</style>
+
 <form enctype="multipart/form-data" method="post">
     {% csrf_token %}
     {% for campo in formulario %}
 
     <div class="mb-3">
         <label for="{{ campo.id_for_label}}" class="form-label">{{campo.label}}</label>
-        {% if campo.field.widget.input_type == 'file' and campo.value %}
-        <br>
-        <img src="{{MEDIA_URL}}/images/{{campo.value}}" width="200">
-        {% endif %}
-        {% if campo.field.widget.input_type %}
-            <input 
-            type="{{ campo.field.widget.input_type }}"
-            class="form-control" 
-            name="{{ campo.name }}"     
-            id="{{ campo.id_for_label }}" 
-            aria-describedby="helpId" 
-            placeholder="{{campo.label}}"
-            value="{{ campo.value | default:'' }}"
-            {% if campo.value %}value="{{ campo.value }}"{% endif %}/>
+        {% if campo.name == 'rol' %}
+            {# --- Dropdown especial para el campo Rol --- #}
+            <div class="rol-field-wrapper">
+                <div class="rol-select-container">
+                    <select class="form-control" name="{{ campo.name }}" id="{{ campo.id_for_label }}">
+                        <option value="">---------</option>
+                        {% for rol in roles %}
+                            <option value="{{ rol.id }}"
+                                {% if campo.value|stringformat:"s" == rol.id|stringformat:"s" %}selected{% endif %}
+                                data-descripcion="{{ rol.descripcion_rol|default:'Sin descripción disponible' }}">
+                                {{ rol.id }} - {{ rol.nombre_rol }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <span class="rol-tooltip-icon" id="rolTooltipIcon">
+                        ?
+                        <span class="rol-tooltip-box" id="rolTooltipBox">
+                            <strong>Seleccione un rol</strong>
+                            Pase el cursor sobre el ícono para ver la descripción del rol seleccionado.
+                        </span>
+                    </span>
+                </div>
+            </div>
 
+        {% elif campo.field.widget.input_type == 'file' and campo.value %}
+            <br>
+            <img src="{{MEDIA_URL}}/images/{{campo.value}}" width="200">
+            {% if campo.field.widget.input_type %}
+                <input 
+                type="{{ campo.field.widget.input_type }}"
+                class="form-control" 
+                name="{{ campo.name }}"     
+                id="{{ campo.id_for_label }}" 
+                aria-describedby="helpId" 
+                placeholder="{{campo.label}}"
+                value="{{ campo.value | default:'' }}"
+                {% if campo.value %}value="{{ campo.value }}"{% endif %}/>
+            {% else %}
+                <input 
+                type="file"
+                class="form-control" 
+                name="{{ campo.name }}" 
+                id="{{ campo.id_for_label }}" 
+                aria-describedby="helpId"/>
+            {% endif %}
         {% else %}
-            <input 
-            type="file"
-            class="form-control" 
-            name="{{ campo.name }}" 
-            id="{{ campo.id_for_label }}" 
-            aria-describedby="helpId"/>
+            {% if campo.field.widget.input_type %}
+                <input 
+                type="{{ campo.field.widget.input_type }}"
+                class="form-control" 
+                name="{{ campo.name }}"     
+                id="{{ campo.id_for_label }}" 
+                aria-describedby="helpId" 
+                placeholder="{{campo.label}}"
+                value="{{ campo.value | default:'' }}"
+                {% if campo.value %}value="{{ campo.value }}"{% endif %}/>
+
+            {% else %}
+                <input 
+                type="file"
+                class="form-control" 
+                name="{{ campo.name }}" 
+                id="{{ campo.id_for_label }}" 
+                aria-describedby="helpId"/>
+            {% endif %}
         {% endif %}
     </div>
     <div class="col-12 help-text"> {{campo.errors}}</div>
@@ -35,3 +148,30 @@
     <a name="" id="" class="btn btn-primary" href="{% url 'usuario' %}" role="button" >Cancelar</a>
     
 </form>
+
+<script>
+    // Actualizar el tooltip dinámicamente al cambiar la selección del rol
+    (function() {
+        var select = document.getElementById('id_rol');
+        var tooltipIcon = document.getElementById('rolTooltipIcon');
+        var tooltipBox = document.getElementById('rolTooltipBox');
+
+        function actualizarTooltip() {
+            if (!select || !tooltipBox) return;
+            var selectedOption = select.options[select.selectedIndex];
+            if (selectedOption && selectedOption.value) {
+                var nombre = selectedOption.textContent.trim();
+                var descripcion = selectedOption.getAttribute('data-descripcion') || 'Sin descripción disponible';
+                tooltipBox.innerHTML = '<strong>' + nombre + '</strong>' + descripcion;
+            } else {
+                tooltipBox.innerHTML = '<strong>Seleccione un rol</strong>Pase el cursor sobre el ícono para ver la descripción del rol seleccionado.';
+            }
+        }
+
+        if (select) {
+            select.addEventListener('change', actualizarTooltip);
+            // Actualizar al cargar la página si ya hay un valor seleccionado
+            actualizarTooltip();
+        }
+    })();
+</script>
